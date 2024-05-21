@@ -31,6 +31,7 @@ app.use(cors());
 app.put("/test", require("./routes/postsRouter"));
 
 app.get("/data/list", require("./routes/getsRouter"));
+app.get("/memo/:memoId", require("./routes/getsRouter"));
 
 const date = new Date();
 server.listen(port, () => {

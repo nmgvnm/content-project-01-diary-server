@@ -34,6 +34,9 @@ app.get("/data/list", require("./routes/getsRouter"));
 app.get("/memo/:memoId", require("./routes/getsRouter"));
 
 const date = new Date();
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
 server.listen(port, () => {
   console.log(`서버가 포트 ${port}에서 실행중입니다. 현재날짜 : ${date}, 타입 : ${typeof date}`);
 });

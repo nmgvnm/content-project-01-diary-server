@@ -1,8 +1,9 @@
 const express = require("express"); // express import
 const TodoList = require("../models/TodoList");
+const Memo = require("../models/Memo");
 const router = express.Router(); // express의 Router 사용
 
-router.put("/todo/new", async (req, res) => {
+router.post("/todo/new", async (req, res) => {
   const { task } = req.query;
   try {
     const newItem = new TodoList({
@@ -16,6 +17,28 @@ router.put("/todo/new", async (req, res) => {
     res.json(newItem);
   } catch (error) {
     console.error("Todo 항목 추가 오류:", error);
+    res.status(500).json({ message: "서버 오류" });
+  }
+});
+
+router.post("/data/save", async (req, res) => {
+  const { category, saveData } = req.body;
+  console.log(req.body);
+  try {
+    if (category === "memo") {
+      const newItem = new Memo({
+        text: saveData.text,
+        createdAt: new Date(), // 'createdAt'으로 변경
+      });
+
+      await newItem.save();
+      console.log("newItem :", newItem);
+      res.json(newItem);
+    } else {
+      res.status(400).json({ message: "유효하지 않은 카테고리입니다." });
+    }
+  } catch (error) {
+    console.error("save data error:", error);
     res.status(500).json({ message: "서버 오류" });
   }
 });

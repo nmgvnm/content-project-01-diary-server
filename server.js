@@ -28,15 +28,22 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
-app.put("/test", require("./routes/postsRouter"));
+// POST
+app.post("/todo/new", require("./routes/postsRouter"));
+app.post("/data/save", require("./routes/postsRouter"));
 
+// GET
 app.get("/data/list", require("./routes/getsRouter"));
 app.get("/memo/:memoId", require("./routes/getsRouter"));
 
+// PUT
+app.put("/data/update", require("./routes/putsRouter"));
+// DELETE
+
 const date = new Date();
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
 server.listen(port, () => {
   console.log(`서버가 포트 ${port}에서 실행중입니다. 현재날짜 : ${date}, 타입 : ${typeof date}`);
 });

@@ -8,7 +8,7 @@ router.get("/data/list", async (req, res) => {
   try {
     let data;
     if (category === "memo") {
-      data = await Memo.find().sort({ date: 1 });
+      data = await Memo.find().sort({ createdAt: -1 });
     }
     res.json(data);
   } catch (error) {
@@ -20,7 +20,7 @@ router.get("/memo/:memoId", async (req, res) => {
   const { memoId } = req.params;
   console.log(typeof memoId);
   try {
-    const memo = await Memo.findOne({ id: memoId });
+    const memo = await Memo.findOne({ _id: memoId });
     if (!memo) {
       res.status(404).json({ message: "메모를 찾을 수 없습니다." });
       console.log("메모 없음");

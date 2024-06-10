@@ -10,8 +10,6 @@ const fileDataSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-// "webTest" 데이터베이스 선택
 const diaryDB = mongoose.connection.useDb("diary");
-
-module.exports = TodoList = diaryDB.model("firebase", fileDataSchema);
+module.exports = diaryDB.model("firebase", fileDataSchema);
 

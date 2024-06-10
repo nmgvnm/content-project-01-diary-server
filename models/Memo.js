@@ -9,5 +9,4 @@ const MemoSchema = new mongoose.Schema(
 );
 
 const diaryDB = mongoose.connection.useDb("diary");
-
-module.exports = TodoList = diaryDB.model("memodatas", MemoSchema);
+module.exports = diaryDB.model("memodatas", MemoSchema);

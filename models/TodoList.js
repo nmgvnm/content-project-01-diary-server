@@ -9,8 +9,5 @@ const TaskSchema = new mongoose.Schema(
   { versionKey: false }
 );
 
-// "webTest" 데이터베이스 선택
 const diaryDB = mongoose.connection.useDb("diary");
-
-// "edidatas" 컬렉션 선택
-module.exports = TodoList = diaryDB.model("todolists", TaskSchema);
+module.exports =  diaryDB.model("todolists", TaskSchema);

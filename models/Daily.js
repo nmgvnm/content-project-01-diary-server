@@ -10,5 +10,4 @@ const DailySchema = new mongoose.Schema(
 );
 
 const diaryDB = mongoose.connection.useDb("diary");
-
-module.exports = TodoList = diaryDB.model("dailydatas", DailySchema);
+module.exports = diaryDB.model("dailydatas", DailySchema);

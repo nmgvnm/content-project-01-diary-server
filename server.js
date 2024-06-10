@@ -8,11 +8,10 @@ const app = express();
 const port = process.env.PORT || 8080;
 const server = require("http").createServer(app);
 const bodyParser = require("body-parser");
-const multer = require("multer");
-const mongoose = require("mongoose");
 const admin = require("firebase-admin");
 // const serviceAccount = require("./service_account_key.json");
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+const connectDB = require("./config/db");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -21,10 +20,8 @@ admin.initializeApp({
 
 const bucket = admin.storage().bucket();
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("mongoose로 mongodb 연결됨"))
-  .catch((err) => console.error("mongoose로 mongodb 연결 실패", err));
+// mongoose
+connectDB();
 
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
@@ -51,6 +48,12 @@ app.get("/memo/:memoId", require("./routes/getsRouter"));
 app.put("/data/update", require("./routes/putsRouter"));
 
 // DELETE
+
+const authRoutes = require("./routes/authRoutes");
+const postRoutes = require("./routes/postRoutes");
+
+app.use("/api/auth", authRoutes);
+app.use("/api/posts", postRoutes);
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

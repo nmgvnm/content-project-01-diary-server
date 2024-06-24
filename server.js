@@ -21,7 +21,7 @@ admin.initializeApp({
 const bucket = admin.storage().bucket();
 // CORS 설정
 app.use(cors({
-  origin: 'http://localhost:3100', // React 앱이 실행 중인 도메인
+  origin: process.env.CORS_SETTING, // React 앱이 실행 중인 도메인
   credentials: true
 }));
 

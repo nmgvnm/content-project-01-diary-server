@@ -2,8 +2,19 @@ const mongoose = require("mongoose");
 
 const MemoSchema = new mongoose.Schema(
   {
-    text: String,
-    createdAt: { type: Date, default: Date.now },
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { versionKey: false }
 );

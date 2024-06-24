@@ -43,4 +43,24 @@ router.post("/data/save", async (req, res) => {
   }
 });
 
+router.post("/data/save/test", async (req, res) => {
+  const { category } = req.query;
+  const { saveData } = req.body;
+
+  try {
+    if (category === "memo") {
+      const newItem = new Memo({
+        user: req.user.id,
+        text: saveData.text,
+        createdAt: new Date(),
+      });
+      const post = await newItem.save();
+      res.status(201).json(post);
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
+
 module.exports = router; //export

@@ -19,6 +19,11 @@ admin.initializeApp({
 });
 
 const bucket = admin.storage().bucket();
+// CORS 설정
+app.use(cors({
+  origin: 'http://localhost:3100', // React 앱이 실행 중인 도메인
+  credentials: true
+}));
 
 // mongoose
 connectDB();
@@ -39,10 +44,12 @@ app.use(cors());
 // POST
 app.post("/todo/new", require("./routes/postsRouter"));
 app.post("/data/save", require("./routes/postsRouter"));
+app.post("/data/save/test", require("./routes/postsRouter"));
 
 // GET
 app.get("/data/list", require("./routes/getsRouter"));
 app.get("/memo/:memoId", require("./routes/getsRouter"));
+app.use('/api/profile', require('./routes/profile')); // 수정된 라우트 경로
 
 // PUT
 app.put("/data/update", require("./routes/putsRouter"));
@@ -54,6 +61,7 @@ const postRoutes = require("./routes/postRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

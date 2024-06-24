@@ -4,7 +4,11 @@ const jwt = require("jsonwebtoken");
 const { token } = require("morgan");
 
 exports.register = async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, name, contact, diaryName } = req.body;
+
+  if (!username || !password || !diaryName) {
+    return res.status(400).json({ msg: "Username, password, and diary name are required" });
+  }
 
   try {
     let user = await User.findOne({ username });
@@ -15,6 +19,9 @@ exports.register = async (req, res) => {
     user = new User({
       username,
       password: await bcrypt.hash(password, 10),
+      name,
+      contact,
+      diaryName,
     });
 
     await user.save();

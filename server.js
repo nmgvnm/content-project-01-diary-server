@@ -15,15 +15,17 @@ const connectDB = require("./config/db");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: "content-project-01-diary.appspot.com",
+  storageBucket: process.env.STORAGE_BUCKET,
 });
 
 const bucket = admin.storage().bucket();
 // CORS 설정
-app.use(cors({
-  origin: process.env.CORS_SETTING, // React 앱이 실행 중인 도메인
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: process.env.CORS_SETTING, // React 앱이 실행 중인 도메인
+    credentials: true,
+  })
+);
 
 // mongoose
 connectDB();
@@ -49,7 +51,7 @@ app.post("/data/save/test", require("./routes/postsRouter"));
 // GET
 app.get("/data/list", require("./routes/getsRouter"));
 app.get("/memo/:memoId", require("./routes/getsRouter"));
-app.use('/api/profile', require('./routes/profile')); // 수정된 라우트 경로
+app.use("/api/profile", require("./routes/profile")); // 수정된 라우트 경로
 
 // PUT
 app.put("/data/update", require("./routes/putsRouter"));
@@ -61,7 +63,6 @@ const postRoutes = require("./routes/postRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
-
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

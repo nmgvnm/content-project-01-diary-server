@@ -9,8 +9,8 @@ const port = process.env.PORT || 8080;
 const server = require("http").createServer(app);
 const bodyParser = require("body-parser");
 const admin = require("firebase-admin");
-// const serviceAccount = require("./service_account_key.json");
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+const serviceAccount = require("./service_account_key.json");
+// const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 const connectDB = require("./config/db");
 
 admin.initializeApp({
@@ -43,23 +43,15 @@ app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(cors());
 
-// POST
-app.post("/todo/new", require("./routes/postsRouter"));
-app.post("/data/save", require("./routes/postsRouter"));
-app.post("/data/save/test", require("./routes/postsRouter"));
+const authRoutes = require("./routes/authRoutes"); // 유저 관련
+const postRoutes = require("./routes/postRoutes"); // 게시물 관련
 
 // GET
-app.get("/data/list", require("./routes/getsRouter"));
 app.get("/memo/:memoId", require("./routes/getsRouter"));
-app.use("/api/profile", require("./routes/profile")); // 수정된 라우트 경로
 
 // PUT
 app.put("/data/update", require("./routes/putsRouter"));
 
-// DELETE
-
-const authRoutes = require("./routes/authRoutes");
-const postRoutes = require("./routes/postRoutes");
 
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);

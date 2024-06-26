@@ -61,13 +61,53 @@ exports.login = async (req, res) => {
         id: user.id,
       },
     };
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: "5d" });
 
-    jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" }, (err, token) => {
-      if (err) throw err;
-      res.json({ token });
-    });
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.json({ accessToken, refreshToken });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.refreshAccessToken = async (req, res) => {
+  const { refreshToken } = req.body;
+  console.log("refreshToken:", refreshToken)
+
+  if (!refreshToken) {
+    return res.status(401).json({ msg: "No refresh token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.user.id);
+    if (!user || user.refreshToken !== refreshToken) {
+      return res.status(403).json({ msg: "Invalid refresh token" });
+    }
+
+    const payload = { user: { id: user.id } };
+    const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
+    res.json({ accessToken });
+  } catch (error) {
+    console.error(err.message);
+    res.status(403).json({ msg: "Invalid refresh token" });
+  }
+};
+
+exports.profile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+    if (!user) {
+      return res.status(404).json({ msg: "User not found" });
+    }
+    res.json(user);
+    console.log(user);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server error");
   }
 };

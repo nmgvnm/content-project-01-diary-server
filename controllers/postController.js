@@ -1,3 +1,4 @@
+const Daily = require("../models/Daily");
 const Memo = require("../models/Memo");
 const Post = require("../models/Post");
 const TodoList = require("../models/TodoList");
@@ -33,7 +34,7 @@ exports.getPosts = async (req, res) => {
 exports.saveDatas = async (req, res) => {
   const { category } = req.query;
   const { saveData } = req.body;
-
+  console.log("saveData:", saveData);
   try {
     let newItem;
 
@@ -50,6 +51,14 @@ exports.saveDatas = async (req, res) => {
           user: req.user.id,
           taskTitle: saveData,
           isCompleted: false,
+          createdAt: new Date(),
+        });
+        break;
+      case "daily":
+        newItem = new Daily({
+          user: req.user.id,
+          title: saveData.title,
+          content: saveData.content,
           createdAt: new Date(),
         });
         break;
@@ -92,7 +101,6 @@ exports.updateTodo = async (req, res) => {
     if (!updatedTodo) {
       return res.status(404).json({ error: "Todo not found" });
     }
-    console.log("updatedTodo : ", updatedTodo);
     res.json(updatedTodo);
   } catch (error) {
     console.error("Todo 업데이트 오류:", error);
@@ -113,11 +121,26 @@ exports.deleteTodo = async (req, res) => {
   }
 };
 
-exports.deletPost = async (req, res) => {
-  const {category} = req.query
+exports.deletePost = async (req, res) => {
+  const { category } = req.query;
+  const { deleteItem } = req.body;
+  console.log("삭제시작");
+  console.log("deleteItem:", deleteItem);
   try {
-    
+    if (category === "memo") {
+      const deleteResult = await Promise.all(
+        deleteItem.map(async (id) => {
+          const result = await Memo.deleteOne({ _id: id });
+          return result;
+        })
+      );
+      console.log("item 삭제 : ", deleteResult);
+      res.status(200).json({ message: "Deletion completed.", deleteResult });
+    } else {
+      res.status(400).json({ message: "Unsupported category." });
+    }
   } catch (error) {
-    
+    console.error("Error during deletion:", error);
+    res.status(500).json({ error: "Server error" });
   }
-}
+};

@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const { token } = require("morgan");
 
 exports.register = async (req, res) => {
-  const { username, password, name, contact, diaryName } = req.body;
+  const { username, password, diaryName } = req.body;
 
   if (!username || !password || !diaryName) {
     return res.status(400).json({ msg: "Username, password, and diary name are required" });
@@ -19,9 +19,8 @@ exports.register = async (req, res) => {
     user = new User({
       username,
       password: await bcrypt.hash(password, 10),
-      name,
-      contact,
       diaryName,
+      profileImage: "none",
     });
 
     await user.save();
@@ -76,7 +75,6 @@ exports.login = async (req, res) => {
 
 exports.refreshAccessToken = async (req, res) => {
   const { refreshToken } = req.body;
-  console.log("refreshToken:", refreshToken)
 
   if (!refreshToken) {
     return res.status(401).json({ msg: "No refresh token provided" });
@@ -105,9 +103,10 @@ exports.profile = async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
     res.json(user);
-    console.log(user);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Server error");
   }
 };
+
+exports.updateProfile = async (req, res) => {};

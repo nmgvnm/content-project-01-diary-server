@@ -19,6 +19,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    refreshToken: {
+      type: String,
+    },
   },
   { versionKey: false }
 );

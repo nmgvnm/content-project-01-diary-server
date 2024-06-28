@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { token } = require("morgan");
 
 exports.register = async (req, res) => {
   const { username, password, diaryName } = req.body;
@@ -75,7 +74,7 @@ exports.login = async (req, res) => {
 
 exports.refreshAccessToken = async (req, res) => {
   const { refreshToken } = req.body;
-
+  console.log("refresh token 발급");
   if (!refreshToken) {
     return res.status(401).json({ msg: "No refresh token provided" });
   }
@@ -91,7 +90,7 @@ exports.refreshAccessToken = async (req, res) => {
     const accessToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
     res.json({ accessToken });
   } catch (error) {
-    console.error(err.message);
+    console.error(error.message);
     res.status(403).json({ msg: "Invalid refresh token" });
   }
 };

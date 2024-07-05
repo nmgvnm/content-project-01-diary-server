@@ -49,10 +49,6 @@ const postRoutes = require("./routes/postRoutes"); // 게시물 관련
 // GET
 app.get("/memo/:memoId", require("./routes/getsRouter"));
 
-// PUT
-app.put("/data/update", require("./routes/putsRouter"));
-
-
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
 

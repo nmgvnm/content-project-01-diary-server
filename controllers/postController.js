@@ -76,13 +76,23 @@ exports.saveDatas = async (req, res) => {
 
 exports.dataList = async (req, res) => {
   const { category } = req.query;
+  let data;
+
   try {
-    let data;
-    if (category === "memo") {
-      data = await Memo.find({ user: req.user.id }).sort({ createdAt: -1 });
-    } else if (category === "todo") {
-      data = await TodoList.find({ user: req.user.id }).sort({ createdAt: -1 });
+    switch (category) {
+      case "memo":
+        data = await Memo.find({ user: req.user.id }).sort({ createdAt: -1 });
+        break;
+      case "todo":
+        data = await TodoList.find({ user: req.user.id }).sort({ createdAt: -1 });
+        break;
+      case "daily":
+        data = await Daily.find({ user: req.user.id }).sort({ createdAt: -1 });
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid category" });
     }
+
     res.json(data);
   } catch (error) {
     console.error("data error", error);
@@ -124,8 +134,7 @@ exports.deleteTodo = async (req, res) => {
 exports.deletePost = async (req, res) => {
   const { category } = req.query;
   const { deleteItem } = req.body;
-  console.log("삭제시작");
-  console.log("deleteItem:", deleteItem);
+
   try {
     if (category === "memo") {
       const deleteResult = await Promise.all(
@@ -142,5 +151,32 @@ exports.deletePost = async (req, res) => {
   } catch (error) {
     console.error("Error during deletion:", error);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.updatePost = async (req, res) => {
+  const { category } = req.query;
+  const { updateData } = req.body;
+
+  let updateitem;
+  try {
+    switch (category) {
+      case "memo":
+        updateitem = await Memo.findByIdAndUpdate(
+          updateData._id,
+          {
+            text: updateData.text,
+            createdAt: new Date(),
+          },
+          { new: true }
+        );
+        break;
+      default:
+        return res.status(400).json({ message: "Invalid category" });
+    }
+    res.json(updateitem);
+  } catch (error) {
+    console.error("메모 업데이트 오류:", error);
+    res.status(500).json({ message: "서버 오류" });
   }
 };

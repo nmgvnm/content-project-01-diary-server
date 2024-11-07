@@ -1,3 +1,4 @@
+const Category = require("../models/Category");
 const Daily = require("../models/Daily");
 const Memo = require("../models/Memo");
 const Post = require("../models/Post");
@@ -57,9 +58,17 @@ exports.saveDatas = async (req, res) => {
       case "daily":
         newItem = new Daily({
           user: req.user.id,
+          titleImg: saveData.titleImg,
           title: saveData.title,
           content: saveData.content,
+          category: saveData.category,
           createdAt: new Date(),
+        });
+        break;
+      case "category":
+        newItem = new Category({
+          user: req.user.id,
+          name: saveData.name,
         });
         break;
       default:
@@ -75,7 +84,7 @@ exports.saveDatas = async (req, res) => {
 };
 
 exports.dataList = async (req, res) => {
-  const { category } = req.query;
+  const { category, details } = req.query;
   let data;
 
   try {
@@ -87,7 +96,18 @@ exports.dataList = async (req, res) => {
         data = await TodoList.find({ user: req.user.id }).sort({ createdAt: -1 });
         break;
       case "daily":
-        data = await Daily.find({ user: req.user.id }).sort({ createdAt: -1 });
+        if (details === "전체") {
+          // "전체"일 때는 category 조건 없이 user에 해당하는 모든 데이터를 가져옴
+          data = await Daily.find({ user: req.user.id }).sort({ createdAt: -1 });
+        } else {
+          // "전체"가 아닐 때는 category 조건을 포함해서 데이터를 가져옴
+          data = await Daily.find({ user: req.user.id, category: details }).sort({ createdAt: -1 });
+        }
+        break;
+      case "categoryList":
+        data = await Category.find({ user: req.user.id }).sort({ name: 1 });
+        // 모든 유저에게 "전체"라는 카테고리를 추가
+        data.unshift({ name: "전체" });
         break;
       default:
         return res.status(400).json({ message: "Invalid category" });

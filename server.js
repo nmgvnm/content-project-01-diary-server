@@ -9,8 +9,8 @@ const port = process.env.PORT || 8080;
 const server = require("http").createServer(app);
 const bodyParser = require("body-parser");
 const admin = require("firebase-admin");
-const serviceAccount = require("./service_account_key.json");
-// const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+// const serviceAccount = require("./service_account_key.json");
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
 const connectDB = require("./config/db");
 
 admin.initializeApp({
